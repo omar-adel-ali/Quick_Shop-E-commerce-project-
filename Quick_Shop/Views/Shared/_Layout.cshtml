@@ -1,0 +1,130 @@
+﻿@{
+    Layout = null;
+}
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Home - Quick Shop</title>
+
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.css" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css" />
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;700&display=swap" />
+    <link rel="stylesheet" href="~/css/styles.css" asp-append-version="true" />
+</head>
+<body>
+    <div class="top-bar">
+        <div class="container top-bar__container">
+            <div class="top-bar__promo" data-translate="free_shipping">Free Shipping on Orders Over $50!</div>
+            <div class="top-bar__actions">
+                @if (User.Identity.IsAuthenticated)
+                {
+                    <span data-translate="welcome">Welcome</span>
+
+                    <form asp-controller="Account" asp-action="Logout" method="post" style="display:inline;">
+                        <button type="submit" class="logout-btn" data-translate="logout" style="background:none; border:none; color:inherit; cursor:pointer;">Logout</button>
+                    </form>
+                }
+                else
+                {
+                    <a asp-controller="Account" asp-action="Register" data-translate="signup">Sign Up</a>
+                    <a asp-controller="Account" asp-action="Login" data-translate="login">Login</a>
+                }
+
+                <select onchange="changeLanguage(this.value)">
+                    <option value="en">English</option>
+                    <option value="ar">العربية</option>
+                </select>
+                <button class="theme-toggle" data-translate="toggle_theme">🌙</button>
+            </div>
+        </div>
+    </div>
+
+    <header class="header">
+        <div class="container header__container">
+            <div class="header__logo">
+                <a asp-controller="Home" asp-action="Index">
+                    <img src="~/img/logo.png" asp-append-version="true" alt="Quick Shop Logo" class="logo-img" />
+                    <span class="logo-text" data-translate="quick_shop">Quick Shop</span>
+                </a>
+            </div>
+            <nav class="header__nav">
+                <ul class="nav-links">
+                    <li><a asp-controller="Home" asp-action="Index" data-translate="home">Home</a></li>
+                    <li><a asp-controller="Product" asp-action="Index" data-translate="products">Products</a></li>
+                    <li><a asp-controller="Cart" asp-action="Index" data-translate="cart">Cart</a></li>
+                    <li><a asp-controller="Wishlist" asp-action="Index" data-translate="wishlist">Wishlist</a></li>
+                    @if (User.IsInRole("Admin"))
+                    {
+                        <li><a asp-controller="Admin" asp-action="Dashboard" data-translate="Dashboard">Admin Dashboard</a></li>
+                    }
+                </ul>
+            </nav>
+            <div class="header__search-cart">
+                <form asp-controller="Product" asp-action="Search" method="get" class="search-form">
+                    <input type="text" name="query" placeholder="Search products..." data-translate-placeholder="search_products" />
+                    <button type="submit"><i class="fas fa-search"></i></button>
+                </form>
+                <a asp-controller="Cart" asp-action="Index"><i class="fas fa-shopping-cart"></i></a>
+                <button class="menu-toggle" aria-expanded="false"><i class="fas fa-bars"></i></button>
+            </div>
+        </div>
+    </header>
+
+    <div class="container">
+        <main role="main" class="pb-3">
+            @RenderBody()
+        </main>
+    </div>
+
+    <footer class="footer">
+        <div class="container footer__content">
+            <div class="footer__section">
+                <h4 data-translate="about_us">About Us</h4>
+                <p data-translate="about_us_desc">
+                    Quick Shop is your one-stop shop for all your needs. We offer a wide
+                    range of products at unbeatable prices.
+                </p>
+            </div>
+            <div class="footer__section">
+                <h4 data-translate="quick_links">Quick Links</h4>
+                <a asp-controller="Home" asp-action="Index" data-translate="home">Home</a>
+                <a asp-controller="Product" asp-action="Index" data-translate="products">Products</a>
+                <a asp-controller="Cart" asp-action="Index" data-translate="cart">Cart</a>
+                <a asp-controller="Wishlist" asp-action="Index" data-translate="wishlist">Wishlist</a>
+                @if (User.IsInRole("Admin"))
+                {
+                    <a asp-controller="Admin" asp-action="Dashboard" data-translate="Dashboard">Admin Dashboard</a>
+                }
+            </div>
+            <div class="footer__section">
+                <h4 data-translate="contact_us">Contact Us</h4>
+                <p data-translate="phone">Phone: +1 234 567 890</p>
+                <p data-translate="address">Address: 123 Mega Street, Shop City</p>
+            </div>
+            <div class="footer__section">
+                <h4 data-translate="newsletter">Newsletter</h4>
+                <form class="subscribe-form">
+                    <input type="email" placeholder="Enter your email" data-translate-placeholder="enter_email" />
+                    <button type="submit" class="btn btn--primary" data-translate="subscribe">Subscribe</button>
+                </form>
+            </div>
+        </div>
+        <div class="container footer__bottom">
+            <p>&copy; 2025 Quick Shop. All rights reserved.</p>
+            <div class="social-icons">
+                <a href="#"><i class="fab fa-facebook-f"></i></a>
+                <a href="#"><i class="fab fa-twitter"></i></a>
+                <a href="#"><i class="fab fa-instagram"></i></a>
+            </div>
+        </div>
+    </footer>
+
+    <script src="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.js"></script>
+    <script src="~/js/script.js" asp-append-version="true"></script>
+
+    @RenderSection("Scripts", required: false)
+
+</body>
+</html>

@@ -1,0 +1,89 @@
+﻿@model Quick_Shop.Data.ViewModels.ProductSearchVM
+
+<main class="products-main">
+    <section class="container">
+        <div class="row">
+            <aside class="col-md-3 filters">
+                <form asp-controller="Product" asp-action="Index" method="get">
+                    <div class="filter-section">
+                        <h3 data-translate="categories">Categories</h3>
+                        <label><input type="checkbox" name="Category" value="fashion" @(Model.Category.Contains("fashion") ? "checked" : "") data-translate="fashion"> Fashion</label>
+                        <label><input type="checkbox" name="Category" value="electronics" @(Model.Category.Contains("electronics") ? "checked" : "") data-translate="electronics"> Electronics</label>
+                        <label><input type="checkbox" name="Category" value="books" @(Model.Category.Contains("books") ? "checked" : "") data-translate="books"> Books</label>
+                        <label><input type="checkbox" name="Category" value="home-kitchen" @(Model.Category.Contains("home-kitchen") ? "checked" : "") data-translate="home_kitchen"> Home & Kitchen</label>
+                        <label><input type="checkbox" name="Category" value="toys-games" @(Model.Category.Contains("toys-games") ? "checked" : "") data-translate="toys_games"> Toys & Games</label>
+                    </div>
+                    <div class="filter-section">
+                        <h3 data-translate="price_range">Price Range</h3>
+                        <input type="range" name="MaxPrice" min="0" max="1000" value="@(Model.MaxPrice ?? 1000)" oninput="updatePriceDisplay(this.value)">
+                        <span id="price-display">$@(Model.MaxPrice ?? 1000)</span>
+                    </div>
+                    <div class="filter-buttons">
+                        <button type="submit" class="btn btn--primary" data-translate="apply_filters">Apply Filters</button>
+                        <a asp-controller="Product" asp-action="Index" class="btn btn--secondary" data-translate="clear_filters">Clear Filters</a>
+                    </div>
+                </form>
+            </aside>
+            <section class="col-md-9 products">
+                <div class="sort-options">
+                    @* <select onchange="location.href=this.value"> *@
+                    @*     <option value="@Url.Action("Index", "Product", new { sortBy = "name" })" selected="@(ViewBag.SortBy == "name" ? "selected" : null)" data-translate="sort_by_name">Sort by Name</option> *@
+                    @*     <option value="@Url.Action("Index", "Product", new { sortBy = "price-low" })" selected="@(ViewBag.SortBy == "price-low" ? "selected" : null)" data-translate="price_low_to_high">Price: Low to High</option> *@
+                    @*     <option value="@Url.Action("Index", "Product", new { sortBy = "price-high" })" selected="@(ViewBag.SortBy == "price-high" ? "selected" : null)" data-translate="price_high_to_low">Price: High to Low</option> *@
+
+                    @* </select> *@
+                </div>
+                @if (!Model.Products.Any())
+                {
+                    <p data-translate="no_products_found">No products found.</p>
+                }
+                else
+                {
+                    <div class="products flash-products">
+                        @foreach (var product in Model.Products)
+                        {
+                            <div class="product-card">
+                                <a href="/Product/Details/@product.Id">
+                                    <img src="@product.Image" alt="@product.Name">
+                                </a>
+                                <h3>@product.Name</h3>
+
+                                <div class="price">
+                                    <span class="current-price">$@product.Price.ToString("F2")</span>
+                                    @if (product.OldPrice.HasValue && product.OldPrice > 0)
+                                    {
+                                        <span class="old-price">$@product.OldPrice.Value.ToString("F2")</span>
+                                    }
+                                </div>
+
+                                <div class="button-group">
+                                    <a href="/Cart/AddItemToCart/@product.Id" class="btn btn--primary">Add to Cart</a>
+                                    <a href="/Wishlist/AddToWishlist/@product.Id" class="btn btn--secondary">Wishlist</a>
+                                </div>
+                            </div>
+
+                        }
+                    </div>
+                }
+            </section>
+        </div>
+    </section>
+</main>
+
+@section Scripts {
+    <script>
+        function updatePriceDisplay(value) {
+            document.getElementById('price-display').textContent = '$' + value;
+        }
+
+        function addToCart(productId) {
+            $.post('/Cart/AddItemToCartAjax', { id: productId }, function (response) {
+                if (response.success) {
+                    alert(response.message);
+                } else {
+                    alert(response.message);
+                }
+            });
+        }
+    </script>
+}

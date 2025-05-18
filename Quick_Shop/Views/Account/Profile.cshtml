@@ -1,0 +1,52 @@
+﻿@model Quick_Shop.Data.ViewModels.UserVM
+
+<main class="profile-main">
+    <section class="profile">
+        <h2 data-translate="user_profile">User Profile</h2>
+        <div class="row">
+            <div class="col-md-6 profile-details">
+                <h3 data-translate="personal_information">Personal Information</h3>
+                <p><strong data-translate="full_name">Full Name</strong>: @Model.FullName</p>
+                <p><strong data-translate="email">Email</strong>: @Model.Email</p>
+                <p><strong data-translate="phone">Phone</strong>: @Model.Phone</p>
+                <a asp-controller="Account" asp-action="EditProfile" class="btn btn--primary" data-translate="edit_profile">Edit Profile</a>
+            </div>
+            <div class="col-md-6 order-history">
+                <h3 data-translate="order_history">Order History</h3>
+                @if (!(ViewBag.Orders?.Any() ?? false))
+                {
+                    <p data-translate="no_orders">No orders yet.</p>
+                }
+                else
+                {
+                    <table class="table">
+                        <thead>
+                            <tr>
+                                <th data-translate="order_id">Order ID</th>
+                                <th data-translate="date">Date</th>
+                                <th data-translate="total">Total</th>
+                                <th data-translate="status">Status</th>
+                                <th data-translate="action">Action</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach (var order in ViewBag.Orders)
+                            {
+                                <tr>
+                                    <td>@order.Id</td>
+                                    <td>@order.OrderDate.ToString("dd MMM yyyy")</td>
+                                    <td>@order.Total.ToString("C")</td>
+                                    <td>@order.OrderStatus</td>
+                                    <td>
+                                        <a asp-controller="Orders" asp-action="Details" asp-route-id="@order.Id" class="btn btn--primary" data-translate="view_details">View Details</a>
+                                    </td>
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+                }
+                <a asp-controller="Account" asp-action="Logout" class="btn btn--secondary" data-translate="logout">Logout</a>
+            </div>
+        </div>
+    </section>
+</main>

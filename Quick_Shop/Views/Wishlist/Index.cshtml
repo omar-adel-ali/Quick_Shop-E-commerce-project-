@@ -1,0 +1,42 @@
+﻿@model IEnumerable<Quick_Shop.Models.Wishlist>
+
+<main class="wishlist-main">
+    <section class="wishlist">
+        <h2 data-translate="wishlist">Wishlist</h2>
+        @if (!Model.Any())
+        {
+            <p data-translate="wishlist_empty">Your wishlist is empty.</p>
+        }
+        else
+        {
+            <table class="wishlist-table">
+                <thead>
+                    <tr>
+                        <th data-translate="product">Product</th>
+                        <th data-translate="price">Price</th>
+                        <th data-translate="action">Action</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var item in Model)
+                    {
+                        <tr>
+                            <td>@item.Product.Name</td>
+                            <td>@item.Product.Price.ToString("C")</td>
+                            <td>
+                                <a asp-controller="Wishlist" asp-action="RemoveFromWishlist" asp-route-id="@item.Id" class="btn btn--danger" data-translate="remove">Remove</a>
+                                <a asp-controller="Cart" asp-action="AddItemToCart" asp-route-id="@item.ProductId" class="btn btn--primary" data-translate="add_to_cart">Add to Cart</a>
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+
+            <!-- زر Clear داخل form لكي يتم تنفيذ POST -->
+            <form asp-controller="Wishlist" asp-action="ClearWishlist" method="post" style="margin-top: 1rem;">
+                <input type="hidden" name="returnUrl" value="@Context.Request.Path" />
+                <button type="submit" class="btn btn--secondary" data-translate="clear_wishlist">Clear Wishlist</button>
+            </form>
+        }
+    </section>
+</main>

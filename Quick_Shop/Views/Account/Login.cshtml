@@ -1,0 +1,29 @@
+﻿@model Quick_Shop.Data.ViewModels.LoginVM
+@if (TempData["Error"] != null)
+{
+    <div class="alert alert-danger">@TempData["Error"]</div>
+}
+<main class="login-main">
+    <section class="login">
+        <h2 data-translate="login">Login</h2>
+        <form asp-controller="Account" asp-action="Login" method="post">
+            <div class="form-group">
+                <label asp-for="EmailAddress" data-translate="email">Email</label>
+                <input asp-for="EmailAddress" class="form-control" />
+                <span asp-validation-for="EmailAddress" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="Password" data-translate="password">Password</label>
+                <input asp-for="Password" class="form-control" type="password" />
+                <span asp-validation-for="Password" class="text-danger"></span>
+            </div>
+            <button type="submit" class="btn btn--primary" data-translate="login">Login</button>
+        </form>
+        <p><a asp-controller="Account" asp-action="Register" data-translate="dont_have_account">Don’t have an account? Sign Up</a></p>
+    </section>
+</main>
+
+@section Scripts {
+    <script src="~/lib/jquery-validation/dist/jquery.validate.min.js"></script>
+    <script src="~/lib/jquery-validation-unobtrusive/jquery.validate.unobtrusive.min.js"></script>
+}

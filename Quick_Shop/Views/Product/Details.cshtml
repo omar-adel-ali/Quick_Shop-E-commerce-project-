@@ -1,0 +1,103 @@
+﻿@model Quick_Shop.Models.Product
+
+@{
+    // 🟢 إعداد الصور داخل بلوك خارجي مستقل في الأعلى
+    var allImages = new List<string>();
+
+    if (!string.IsNullOrEmpty(Model.Image))
+    {
+        allImages.Add(Model.Image);
+    }
+
+    if (!string.IsNullOrEmpty(Model.Images))
+    {
+        try
+        {
+            var additional = System.Text.Json.JsonSerializer.Deserialize<List<string>>(Model.Images);
+            if (additional != null)
+            {
+                allImages.AddRange(additional);
+            }
+        }
+        catch { }
+    }
+
+    var mainImage = allImages.FirstOrDefault() ?? "img/fallback-image.jpg";
+}
+
+<main class="product-details-main">
+    <section class="container">
+        @if (Model == null)
+        {
+            <p data-translate="product_not_found">Product not found.</p>
+        }
+        else
+        {
+            <div class="row product-details-container">
+                <div class="col-md-6 product-images">
+                    <!-- ✅ الصورة الكبيرة -->
+                    <img id="main-product-image"
+                         src="@Url.Content("~/" + mainImage)"
+                         alt="@Model.Name"
+                         class="main-image"
+                         onerror="this.src='/img/fallback-image.jpg';" />
+
+                    <!-- ✅ الصور الإضافية (حتى 3 صور) -->
+                    <div class="thumbnail-images d-flex mt-3">
+                        @foreach (var image in allImages.Take(3))
+                        {
+                            <img src="@Url.Content("~/" + image)"
+                                 alt="@Model.Name"
+                                 class="thumbnail me-2"
+                                 onclick="swapMainImage(this)"
+                                 onerror="this.src='/img/fallback-image.jpg';" />
+                        }
+                    </div>
+                </div>
+
+                <div class="col-md-6 product-info">
+                    <h2>@Model.Name</h2>
+                    <p class="price">@Model.Price.ToString("C")</p>
+                    @if (Model.OldPrice.HasValue)
+                    {
+                        <p class="old-price" data-translate="old_price">@Model.OldPrice.Value.ToString("C")</p>
+                    }
+
+                    <p class="description">@Model.Description</p>
+
+                    @if (User.Identity.IsAuthenticated)
+                    {
+                        <form asp-controller="Cart" asp-action="AddItemToCart" method="post">
+                            <input type="hidden" name="id" value="@Model.Id" />
+                            <button type="submit" class="btn btn--primary" data-translate="add_to_cart">Add to Cart</button>
+                        </form>
+                        <form asp-controller="Wishlist" asp-action="AddToWishlist" method="post">
+                            <input type="hidden" name="id" value="@Model.Id" />
+                            <button type="submit" class="btn btn--secondary" data-translate="add_to_wishlist">Add to Wishlist</button>
+                        </form>
+                    }
+                    else
+                    {
+                        <p data-translate="login_to_add">
+                            Please <a asp-controller="Account" asp-action="Login">login</a> to add to cart or wishlist.
+                        </p>
+                    }
+                </div>
+            </div>
+        }
+    </section>
+</main>
+
+@section Scripts {
+    <script>
+        function swapMainImage(thumbnail) {
+            const mainImage = document.getElementById('main-product-image');
+            if (mainImage && thumbnail.src) {
+                mainImage.src = thumbnail.src;
+            }
+
+            document.querySelectorAll('.thumbnail').forEach(img => img.classList.remove('active'));
+            thumbnail.classList.add('active');
+        }
+    </script>
+}

@@ -1,0 +1,157 @@
+﻿@model Quick_Shop.Data.ViewModels.ProductSearchVM
+
+<!-- Hero Banner -->
+<section class="hero-banner">
+    <div class="hero-slider swiper">
+        <div class="swiper-wrapper">
+            <div class="swiper-slide">
+                <img src="/img/megaA.jpg" alt="Banner 1" />
+                <div class="banner-text">
+                    <h2 data-translate="mega_sale">Mega Sale</h2>
+                    <p data-translate="mega_sale_desc">Up to 50% off on all products!</p>
+                    <a asp-controller="Product" asp-action="Index" class="btn btn--primary" data-translate="shop_now">Shop Now</a>
+                </div>
+            </div>
+            <div class="swiper-slide">
+                <img src="/img/Arrivals.jpg" alt="Banner 2" />
+                <div class="banner-text">
+                    <h2 data-translate="new_arrivals">New Arrivals</h2>
+                    <p data-translate="new_arrivals_desc">Discover the latest trends!</p>
+                    <a asp-controller="Product" asp-action="Index" class="btn btn--primary" data-translate="explore_now">Explore Now</a>
+                </div>
+            </div>
+            <div class="swiper-slide">
+                <img src="/img/bannerA.jpg" alt="Banner 3" />
+                <div class="banner-text">
+                    <h2 data-translate="special_offer">Special Offer</h2>
+                    <p data-translate="special_offer_desc">Buy one get one free!</p>
+                    <a asp-controller="Product" asp-action="Index" class="btn btn--primary" data-translate="shop_now">Shop Now</a>
+                </div>
+            </div>
+        </div>
+        <div class="swiper-pagination"></div>
+        <div class="swiper-button-next"></div>
+        <div class="swiper-button-prev"></div>
+    </div>
+</section>
+
+<!-- Featured Categories -->
+<section class="featured-categories">
+    <div class="container">
+        <h2 data-translate="shop_by_category">Shop by Category</h2>
+        <div class="categories-grid">
+            <div class="category-card">
+                <a asp-controller="Product" asp-action="Index" asp-route-category="fashion">
+                    <img src="/img/fashion.png" alt="Fashion" />
+                    <h3 data-translate="fashion">Fashion</h3>
+                </a>
+            </div>
+            <div class="category-card">
+                <a asp-controller="Product" asp-action="Index" asp-route-category="electronics">
+                    <img src="/img/Electronics.png" alt="Electronics" />
+                    <h3 data-translate="electronics">Electronics</h3>
+                </a>
+            </div>
+            <div class="category-card">
+                <a asp-controller="Product" asp-action="Index" asp-route-category="books">
+                    <img src="/img/Books.png" alt="Books" />
+                    <h3>Books</h3>
+                </a>
+            </div>
+            <div class="category-card">
+                <a asp-controller="Product" asp-action="Index" asp-route-category="home-kitchen">
+                    <img src="/img/Kitchen.png" alt="Home & Kitchen" />
+                    <h3>Home & Kitchen</h3>
+                </a>
+            </div>
+            <div class="category-card">
+                <a asp-controller="Product" asp-action="Index" asp-route-category="toys-games">
+                    <img src="/img/Toys.png" alt="Toys & Games" />
+                    <h3>Toys & Games</h3>
+                </a>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Flash Sales -->
+<section class="flash-sales">
+    <div class="flash-header">
+        <h2 data-translate="flash_sales">Flash Sales</h2>
+        <div class="timer">
+            <div>
+                <span id="hours">00</span>
+                <span data-translate="hours">Hours</span>
+            </div>
+            <div>
+                <span id="minutes">00</span>
+                <span data-translate="minutes">Minutes</span>
+            </div>
+            <div>
+                <span id="seconds">00</span>
+                <span data-translate="seconds">Seconds</span>
+            </div>
+        </div>
+    </div>
+    <div class="products flash-products"></div>
+</section>
+
+<!-- Best Sellers -->
+<section class="best-sellers">
+    <h2 data-translate="best_sellers">Best Sellers</h2>
+    <div class="product-list">
+        @foreach (var product in Model.Products)
+        {
+            <div class="product-card">
+                <a asp-controller="Product" asp-action="Details" asp-route-id="@product.Id">
+                    <img src="@product.Image" alt="@product.Name" />
+                </a>
+                <h3>@product.Name</h3>
+
+                <div class="price">
+                    <span class="current-price">$@product.Price.ToString("F2")</span>
+                    @if (product.OldPrice.HasValue && product.OldPrice > 0)
+                    {
+                        <span class="old-price">$@product.OldPrice.Value.ToString("F2")</span>
+                    }
+                </div>
+
+                <div class="button-group">
+                    <a asp-controller="Cart" asp-action="AddItemToCart" asp-route-id="@product.Id" class="btn btn--primary">Add to Cart</a>
+                    <a asp-controller="Wishlist" asp-action="AddToWishlist" asp-route-id="@product.Id" class="btn btn--secondary">Wishlist</a>
+                </div>
+            </div>
+        }
+    </div>
+</section>
+
+<!-- Promo Banner -->
+<section class="promo-banner">
+    <div class="banner">
+        <img src="/img/offer1.jpg" alt="Promo Banner" />
+        <div class="banner-text">
+            <h2 data-translate="seasonal_offer">Seasonal Offer</h2>
+            <p data-translate="seasonal_offer_desc">Get 30% off on selected items this month!</p>
+            <a asp-controller="Product" asp-action="Index" class="btn btn--primary" data-translate="shop_now">Shop Now</a>
+        </div>
+    </div>
+</section>
+
+<!-- Testimonials -->
+<section class="testimonials">
+    <h2 data-translate="customer_reviews">What Our Customers Say</h2>
+    <div class="testimonials-grid">
+        <div class="testimonial">
+            <p data-translate="review_1">"Amazing products and fast delivery! Quick Shop is my go-to store."</p>
+            <div class="reviewer-name">John Doe</div>
+        </div>
+        <div class="testimonial">
+            <p data-translate="review_2">"Great deals and excellent customer service. Highly recommend!"</p>
+            <div class="reviewer-name">Jane Smith</div>
+        </div>
+        <div class="testimonial">
+            <p data-translate="review_3">"The variety of products is fantastic. I always find what I need."</p>
+            <div class="reviewer-name">Ahmed Ali</div>
+        </div>
+    </div>
+</section>

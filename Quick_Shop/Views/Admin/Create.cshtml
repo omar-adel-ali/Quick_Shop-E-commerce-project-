@@ -1,0 +1,180 @@
+﻿@model Quick_Shop.Models.Product
+
+@{
+    ViewData["Title"] = "Create Product";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<h2>Create New Product</h2>
+
+@if (!ViewData.ModelState.IsValid)
+{
+    <div class="alert alert-danger">
+        <ul>
+            @foreach (var error in ViewData.ModelState.Values.SelectMany(v => v.Errors))
+            {
+                <li>@error.ErrorMessage</li>
+            }
+        </ul>
+    </div>
+}
+
+<form asp-action="Create" method="post" enctype="multipart/form-data">
+    <div class="form-group">
+        <label asp-for="Name" class="control-label"></label>
+        <input asp-for="Name" class="form-control" />
+        <span asp-validation-for="Name" class="text-danger"></span>
+    </div>
+    <div class="form-group">
+        <label asp-for="Price" class="control-label"></label>
+        <input asp-for="Price" class="form-control" type="number" step="0.01" />
+        <span asp-validation-for="Price" class="text-danger"></span>
+    </div>
+    <div class="form-group">
+        <label asp-for="Category" class="control-label"></label>
+        <input asp-for="Category" class="form-control" />
+        <span asp-validation-for="Category" class="text-danger"></span>
+    </div>
+    <div class="form-group">
+        <label class="control-label">Main Image</label>
+        <div class="input-group mb-2">
+            <div class="custom-control custom-radio custom-control-inline">
+                <input type="radio" id="imageUpload" name="imageOption" class="custom-control-input" value="upload" checked>
+                <label class="custom-control-label" for="imageUpload">Upload File</label>
+            </div>
+            <div class="custom-control custom-radio custom-control-inline">
+                <input type="radio" id="imageUrl" name="imageOption" class="custom-control-input" value="url">
+                <label class="custom-control-label" for="imageUrl">Enter URL</label>
+            </div>
+        </div>
+        <div id="imageUploadDiv">
+            <input type="file" name="MainImageFile" class="form-control-file" accept="image/*" />
+            <span class="text-danger">@ViewData.ModelState["MainImageFile"]?.Errors.FirstOrDefault()?.ErrorMessage</span>
+        </div>
+        <div id="imageUrlDiv" style="display: none;">
+            <input asp-for="Image" class="form-control" placeholder="Enter main image URL (e.g., /img/image.png)" />
+            <span asp-validation-for="Image" class="text-danger"></span>
+        </div>
+    </div>
+    <div class="form-group">
+        <label class="control-label">Additional Images</label>
+        <div class="input-group mb-2">
+            <div class="custom-control custom-radio custom-control-inline">
+                <input type="radio" id="imagesUpload" name="imagesOption" class="custom-control-input" value="upload" checked>
+                <label class="custom-control-label" for="imagesUpload">Upload Files</label>
+            </div>
+            <div class="custom-control custom-radio custom-control-inline">
+                <input type="radio" id="imagesUrl" name="imagesOption" class="custom-control-input" value="url">
+                <label class="custom-control-label" for="imagesUrl">Enter URLs</label>
+            </div>
+        </div>
+        <div id="imagesUploadDiv">
+            <input type="file" name="AdditionalImagesFiles" class="form-control-file" accept="image/*" multiple />
+            <span class="text-danger">@ViewData.ModelState["AdditionalImagesFiles"]?.Errors.FirstOrDefault()?.ErrorMessage</span>
+        </div>
+        <div id="imagesUrlDiv" style="display: none;">
+            <div class="input-group mb-2">
+                <input type="text" id="imageUrlInput" class="form-control" placeholder="Enter image URL (e.g., /img/image.png)" />
+                <button type="button" id="addImageBtn" class="btn btn-primary">Add</button>
+            </div>
+            <ul id="imageList" class="list-group mb-2"></ul>
+            <input type="hidden" asp-for="Images" id="imagesJson" />
+            <span asp-validation-for="Images" class="text-danger"></span>
+        </div>
+    </div>
+    <div class="form-group">
+        <label asp-for="Description" class="control-label"></label>
+        <textarea asp-for="Description" class="form-control"></textarea>
+        <span asp-validation-for="Description" class="text-danger"></span>
+    </div>
+    <div class="form-group">
+        <button type="submit" class="btn btn-primary">Create</button>
+        <a asp-action="Dashboard" class="btn btn-secondary">Cancel</a>
+    </div>
+</form>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            // Toggle Main Image options
+            const imageUploadRadio = document.getElementById('imageUpload');
+            const imageUrlRadio = document.getElementById('imageUrl');
+            const imageUploadDiv = document.getElementById('imageUploadDiv');
+            const imageUrlDiv = document.getElementById('imageUrlDiv');
+
+            imageUploadRadio.addEventListener('change', function () {
+                imageUploadDiv.style.display = 'block';
+                imageUrlDiv.style.display = 'none';
+            });
+            imageUrlRadio.addEventListener('change', function () {
+                imageUploadDiv.style.display = 'none';
+                imageUrlDiv.style.display = 'block';
+            });
+
+            // Toggle Additional Images options
+            const imagesUploadRadio = document.getElementById('imagesUpload');
+            const imagesUrlRadio = document.getElementById('imagesUrl');
+            const imagesUploadDiv = document.getElementById('imagesUploadDiv');
+            const imagesUrlDiv = document.getElementById('imagesUrlDiv');
+
+            imagesUploadRadio.addEventListener('change', function () {
+                imagesUploadDiv.style.display = 'block';
+                imagesUrlDiv.style.display = 'none';
+            });
+            imagesUrlRadio.addEventListener('change', function () {
+                imagesUploadDiv.style.display = 'none';
+                imagesUrlDiv.style.display = 'block';
+            });
+
+            // JavaScript for Additional Images URLs
+            const imageUrlInput = document.getElementById('imageUrlInput');
+            const addImageBtn = document.getElementById('addImageBtn');
+            const imageList = document.getElementById('imageList');
+            const imagesJson = document.getElementById('imagesJson');
+            let images = [];
+
+            // Load existing images (if any)
+            if (imagesJson.value && imagesJson.value !== '[]') {
+                try {
+                    images = JSON.parse(imagesJson.value);
+                    images.forEach(url => addImageToList(url));
+                } catch (e) {
+                    console.error('Error parsing images JSON:', e);
+                }
+            }
+
+            // Add image to list
+            addImageBtn.addEventListener('click', function () {
+                const url = imageUrlInput.value.trim();
+                if (url) {
+                    images.push(url);
+                    addImageToList(url);
+                    imageUrlInput.value = '';
+                    updateImagesJson();
+                }
+            });
+
+            // Function to add image to UI
+            function addImageToList(url) {
+                const li = document.createElement('li');
+                li.className = 'list-group-item d-flex justify-content-between align-items-center';
+                li.innerHTML = `
+                    <span>${url}</span>
+                    <button type="button" class="btn btn-danger btn-sm remove-image">Remove</button>
+                `;
+                li.querySelector('.remove-image').addEventListener('click', function () {
+                    images = images.filter(item => item !== url);
+                    li.remove();
+                    updateImagesJson();
+                });
+                imageList.appendChild(li);
+            }
+
+            // Update hidden input with JSON
+            function updateImagesJson() {
+                imagesJson.value = JSON.stringify(images);
+            }
+        });
+    </script>
+}

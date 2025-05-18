@@ -1,0 +1,39 @@
+﻿@model Quick_Shop.Data.ViewModels.RegisterVM
+@if (TempData["Error"] != null)
+{
+    <div class="alert alert-danger">@TempData["Error"]</div>
+}
+<main class="signup-main">
+    <section class="signup">
+        <h2 data-translate="sign_up">Sign Up</h2>
+        <form asp-controller="Account" asp-action="Register" method="post">
+            <div class="form-group">
+                <label asp-for="FullName" data-translate="full_name">Full Name</label>
+                <input asp-for="FullName" class="form-control" />
+                <span asp-validation-for="FullName" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="EmailAddress" data-translate="email">Email</label>
+                <input asp-for="EmailAddress" class="form-control" />
+                <span asp-validation-for="EmailAddress" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="Password" data-translate="password">Password</label>
+                <input asp-for="Password" class="form-control" type="password" />
+                <span asp-validation-for="Password" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="ConfirmPassword" data-translate="confirm_password">Confirm Password</label>
+                <input asp-for="ConfirmPassword" class="form-control" type="password" />
+                <span asp-validation-for="ConfirmPassword" class="text-danger"></span>
+            </div>
+            <button type="submit" class="btn btn--primary" data-translate="sign_up">Sign Up</button>
+        </form>
+        <p><a asp-controller="Account" asp-action="Login" data-translate="already_have_account">Already have an account? Login</a></p>
+    </section>
+</main>
+
+@section Scripts {
+    <script src="~/lib/jquery-validation/dist/jquery.validate.min.js"></script>
+    <script src="~/lib/jquery-validation-unobtrusive/jquery.validate.unobtrusive.min.js"></script>
+}
